@@ -12,7 +12,7 @@ public class FilmRepository {
     }
     public int findTotaalVrijePlaatsen(){
         var sql = """
-                select SUM(vrijePlaatsen)  
+                select sum(vrijePlaatsen)  
                 from films
                 """;
         return template.queryForObject(sql, Integer.class);

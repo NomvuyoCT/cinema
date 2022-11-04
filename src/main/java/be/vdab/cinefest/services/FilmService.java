@@ -5,6 +5,7 @@ import be.vdab.cinefest.repositories.FilmRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,6 +21,12 @@ public class FilmService {
     }
     public Optional<Film> findById(long id){
         return filmRepository.findById(id);
+    }
+    public List<Film> findAll(){
+        return filmRepository.findAll();
+    }
+    public List<Film> findByJaar(int jaar){
+        return filmRepository.findByJaar(jaar);
     }
 
 }

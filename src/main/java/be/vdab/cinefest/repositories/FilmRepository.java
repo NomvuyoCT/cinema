@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -38,5 +39,22 @@ public class FilmRepository {
         } catch (IncorrectResultSizeDataAccessException ex){
             return Optional.empty();
         }
+    }
+    public List<Film> findAll(){
+        var sql = """
+                select id, titel, jaar, vrijePlaatsen, aankoopprijs
+                from films
+                order by titel;
+                """;
+        return template.query(sql, filmRowMapper);
+    }
+    public List<Film> findByJaar(int jaar){
+        var sql = """
+                select id, titel, jaar, vrijePlaatsen, aankoopprijs
+                from films
+                where jaar = ?
+                order by titel;
+                """;
+        return template.query(sql, filmRowMapper, jaar);
     }
 }

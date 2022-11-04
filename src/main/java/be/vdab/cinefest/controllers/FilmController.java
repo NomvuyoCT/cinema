@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.stream.Stream;
+
 @RestController
 public class FilmController {
     private final FilmService filmService;
@@ -30,4 +32,17 @@ public class FilmController {
                 .map(film -> new ZonderAankoopprijs(film))
                 .orElseThrow(() -> new FilmNietGevondenException(id));
     }
+    @GetMapping("films")
+    Stream<ZonderAankoopprijs> findAll(){
+        return filmService.findAll()
+                .stream()
+                .map(film -> new ZonderAankoopprijs(film));
+    }
+    @GetMapping(value = "films", params = "jaar")
+    Stream<ZonderAankoopprijs> findByJaar(int jaar){
+        return filmService.findByJaar(jaar)
+                .stream()
+                .map(film -> new ZonderAankoopprijs(film));
+    }
+
 }

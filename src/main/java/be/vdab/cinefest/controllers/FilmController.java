@@ -14,13 +14,20 @@ public class FilmController {
     public FilmController(FilmService filmService) {
         this.filmService = filmService;
     }
+
+    private record ZonderAankoopprijs(long id, String titel, int jaar, int vrijePlaatsen){
+        ZonderAankoopprijs(Film film){
+            this(film.getId(), film.getTitel(), film.getJaar(), film.getVrijePlaatsen());
+        }
+    }
     @GetMapping("films/totaalVrijePlaatsen")
     int  findTotaalVrijePlaatsen(){
         return filmService.findTotaalVrijePlaatsen();
     }
     @GetMapping("films/{id}")
-    Film findById(@PathVariable long id){
+    ZonderAankoopprijs findById(@PathVariable long id){
         return filmService.findById(id)
+                .map(film -> new ZonderAankoopprijs(film))
                 .orElseThrow(() -> new FilmNietGevondenException(id));
     }
 }

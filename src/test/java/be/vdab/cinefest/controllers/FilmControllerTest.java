@@ -7,9 +7,11 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @Sql("/films.sql")
@@ -62,5 +64,13 @@ class FilmControllerTest extends AbstractTransactionalJUnit4SpringContextTests {
                                 countRowsInTableWhere(FILMS, "jaar = 2000")
                         )
                 );
+    }
+
+    @Test
+    void deleteVerwijdertEenFilm() throws Exception {
+        var id = idVanTestFilm1();
+        mockMvc.perform(delete("/films/{id}", id))
+                .andExpect(status().isOk());
+        assertThat(countRowsInTableWhere(FILMS, "id = " + id)).isZero();
     }
 }

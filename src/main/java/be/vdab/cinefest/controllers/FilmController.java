@@ -3,6 +3,7 @@ package be.vdab.cinefest.controllers;
 import be.vdab.cinefest.domain.Film;
 import be.vdab.cinefest.exceptions.FilmNietGevondenException;
 import be.vdab.cinefest.services.FilmService;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,6 +44,10 @@ public class FilmController {
         return filmService.findByJaar(jaar)
                 .stream()
                 .map(film -> new ZonderAankoopprijs(film));
+    }
+    @DeleteMapping("films/{id}")
+    void delete(@PathVariable long id){
+        filmService.delete(id);
     }
 
 }

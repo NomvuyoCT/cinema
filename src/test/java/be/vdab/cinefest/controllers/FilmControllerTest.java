@@ -102,4 +102,33 @@ class FilmControllerTest extends AbstractTransactionalJUnit4SpringContextTests {
                 .andExpect(status().isBadRequest());
         //his json files and record validation are different. pls see his answer too.
     }
+
+    @Test
+    void patchVerandertTitelVanFilm() throws Exception {
+        var id = idVanTestFilm1();
+        mockMvc.perform(patch("/films/{id}/titel", id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("test7"))
+                .andExpect(status().isOk());
+        assertThat(countRowsInTableWhere(FILMS,
+                "titel = 'test7' and id = " + id)).isOne();
+    }
+
+    @Test
+    void patchMetOnbestaandeIdMislukt() throws Exception {
+        mockMvc.perform(patch("/films/{id}/titel", Long.MAX_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("gewijzigd"))
+                .andExpect(status().isNotFound());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", " "})
+    void patchMetLegeTitelMislukt(String jsonData) throws Exception {
+        var id  = idVanTestFilm1();
+        mockMvc.perform(patch("/films/{id}/titel", id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonData))
+                .andExpect(status().isBadRequest());
+    }
 }

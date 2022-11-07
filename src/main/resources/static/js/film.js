@@ -9,7 +9,8 @@ byId("zoek").onclick = async function (){
         return;
     }
     findById(zoekIdInput.value);
-}
+};
+
 byId("verwijder").onclick = async function(){
     const zoekIdInput = byId("zoekId");
     const response = await fetch(`films/${zoekIdInput.value}`, {method: "DELETE"});
@@ -20,11 +21,23 @@ byId("verwijder").onclick = async function(){
     } else {
         toon("storing");
     }
-}
+};
+byId("bewaar").onclick = async function () {
+    const nieuweTitelInput = byId("nieuweTitel");
+    if(nieuweTitelInput.checkValidity()){
+        verberg("nieuweTitelFout");
+        updateFilm(nieuweTitelInput.value);
+    } else {
+        toon("nieuweTitelFout");
+        nieuweTitelInput.focus()
+    }
+
+};
 function verbergFilmEnFouten(){
     verberg("film");
     verberg("zoekIdFout");
     verberg("nietGevonden");
+    verberg("nieuweTitelFout")
     verberg("storing");
 }
 async function findById(id){
@@ -41,5 +54,18 @@ async function findById(id){
         } else {
             toon("storing");
         }
+    }
+}
+async function updateFilm(titel){
+    const response  = await fetch(`films/${byId("zoekId").value}/titel`,
+        {
+            method: "PATCH",
+            headers: {'Content-Type': "application/json"},
+            body: JSON.stringify(titel)
+        });
+    if (response.ok){
+        setText("titel", titel);
+    } else {
+        toon("storing")
     }
 }

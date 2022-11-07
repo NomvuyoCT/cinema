@@ -4,12 +4,16 @@ import be.vdab.cinefest.domain.Film;
 import be.vdab.cinefest.dto.NieuweFilm;
 import be.vdab.cinefest.exceptions.FilmNietGevondenException;
 import be.vdab.cinefest.services.FilmService;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 import java.util.stream.Stream;
 
 @RestController
+@Validated
 public class FilmController {
     private final FilmService filmService;
 
@@ -53,6 +57,11 @@ public class FilmController {
     long create(@RequestBody @Valid NieuweFilm nieuweFilm){
         var id = filmService.create(nieuweFilm);
         return id;
+    }
+    @PatchMapping("films/{id}/titel")
+    void update(@PathVariable long id,
+                @RequestBody @NotBlank String titel){
+        filmService.update(id, titel);
     }
 
 }

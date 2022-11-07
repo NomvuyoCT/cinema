@@ -1,10 +1,12 @@
 package be.vdab.cinefest.services;
 
 import be.vdab.cinefest.domain.Film;
+import be.vdab.cinefest.dto.NieuweFilm;
 import be.vdab.cinefest.repositories.FilmRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,5 +34,13 @@ public class FilmService {
     public void delete(long id){
         filmRepository.delete(id);
     }
+    @Transactional
+    public long create(NieuweFilm nieuweFilm){
+        var vrijePlaatsen = 0;
+        var aankoopPrijs = BigDecimal.ZERO;
+        var film = new Film(nieuweFilm.titel(), nieuweFilm.jaar(), vrijePlaatsen, aankoopPrijs);
+        return filmRepository.create(film);
+    }
+
 
 }

@@ -4,8 +4,10 @@ import be.vdab.cinefest.domain.Film;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,4 +66,23 @@ public class FilmRepository {
                 """;
         template.update(sql, id);
     }
+    public long create(Film film){
+        var sql = """
+                insert into films (titel, jaar, vrijePlaatsen, aankoopPrijs)
+                values (?, ?, ?, ?)
+                """;
+        var keyHolder = new GeneratedKeyHolder();
+        template.update(connection -> {
+            var statement = connection.prepareStatement(sql,
+                    PreparedStatement.RETURN_GENERATED_KEYS);
+            statement.setString(1, film.getTitel());
+            statement.setInt(2, film.getJaar());
+            statement.setInt(3, film.getVrijePlaatsen());
+            statement.setBigDecimal(4, film.getAankoopprijs());
+            return statement;
+        }, keyHolder);
+        return keyHolder.getKey().longValue();
+    }
+
+
 }

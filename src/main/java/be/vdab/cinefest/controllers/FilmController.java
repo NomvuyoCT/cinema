@@ -6,6 +6,7 @@ import be.vdab.cinefest.exceptions.FilmNietGevondenException;
 import be.vdab.cinefest.services.FilmService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.stream.Stream;
 
 @RestController
@@ -49,7 +50,7 @@ public class FilmController {
     }
 
     @PostMapping("films")
-    long create(@RequestBody NieuweFilm nieuweFilm){
+    long create(@RequestBody @Valid NieuweFilm nieuweFilm){
         var id = filmService.create(nieuweFilm);
         return id;
     }

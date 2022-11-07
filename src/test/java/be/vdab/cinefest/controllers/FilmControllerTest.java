@@ -1,6 +1,8 @@
 package be.vdab.cinefest.controllers;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -88,5 +90,16 @@ class FilmControllerTest extends AbstractTransactionalJUnit4SpringContextTests {
                 .andReturn().getResponse().getContentAsString();
         assertThat(countRowsInTableWhere(FILMS,
                 "titel = 'test3' and id = " + responseBody)).isOne();
+    }
+    @ParameterizedTest
+    @ValueSource(strings = {"filmMetLegeTitel.json", "filmZonderTitel.json",
+    "filmZonderJaar.json", "filmMetJaarBuitenGrenzen.json"})
+    void createMetVerkeerdeDataMislukt(String bestandsNaam) throws Exception{
+        var jsonData = Files.readString(TEST_RESOURCES.resolve(bestandsNaam));
+        var responseBody = mockMvc.perform(post("/films")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonData))
+                .andExpect(status().isBadRequest());
+        //his json files and record validation are different. pls see his answer too.
     }
 }

@@ -36,9 +36,9 @@ public class FilmService {
     }
     @Transactional
     public long create(NieuweFilm nieuweFilm){
-        var vrijePlaatsen = 0;
-        var aankoopPrijs = BigDecimal.ZERO;
-        var film = new Film(nieuweFilm.titel(), nieuweFilm.jaar(), vrijePlaatsen, aankoopPrijs);
+        /*var vrijePlaatsen = 0;
+        var aankoopPrijs = BigDecimal.ZERO;*/
+        var film = new Film(nieuweFilm.titel(), nieuweFilm.jaar(), 0, BigDecimal.ZERO);
         return filmRepository.create(film);
     }
 

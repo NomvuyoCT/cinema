@@ -1,0 +1,43 @@
+package be.vdab.cinefest.domain;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+public class Reservatie {
+    private final long id;
+    private final long filmId;
+    private final String emailAdres;
+    private final int plaatsen;
+    private final LocalDate besteld;
+
+    public Reservatie(long id, long filmId, String emailAdres, int plaatsen, LocalDate besteld) {
+        this.id = id;
+        this.filmId = filmId;
+        this.emailAdres = emailAdres;
+        this.plaatsen = plaatsen;
+        this.besteld = besteld;
+    }
+    public Reservatie(long filmId, String emailAdres, int plaatsen){
+        this(0, filmId, emailAdres, plaatsen, LocalDate.now());
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public long getFilmId() {
+        return filmId;
+    }
+
+    public String getEmailAdres() {
+        return emailAdres;
+    }
+
+    public int getPlaatsen() {
+        return plaatsen;
+    }
+
+    public LocalDate getBesteld() {
+        return besteld;
+    }
+}

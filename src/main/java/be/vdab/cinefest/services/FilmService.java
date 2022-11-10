@@ -1,8 +1,11 @@
 package be.vdab.cinefest.services;
 
 import be.vdab.cinefest.domain.Film;
+import be.vdab.cinefest.domain.Reservatie;
 import be.vdab.cinefest.dto.NieuweFilm;
+import be.vdab.cinefest.exceptions.FilmNietGevondenException;
 import be.vdab.cinefest.repositories.FilmRepository;
+import be.vdab.cinefest.repositories.ReservatieRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,9 +17,12 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class FilmService {
     private final FilmRepository filmRepository;
+    private final ReservatieRepository reservatieRepository;
 
-    public FilmService(FilmRepository filmRepository) {
+    public FilmService(FilmRepository filmRepository, ReservatieRepository reservatieRepository) {
         this.filmRepository = filmRepository;
+
+        this.reservatieRepository = reservatieRepository;
     }
     public int findTotaalVrijePlaatsen(){
         return filmRepository.findTotaalVrijePlaatsen();
@@ -35,7 +41,7 @@ public class FilmService {
         filmRepository.delete(id);
     }
     @Transactional
-    public long create(NieuweFilm nieuweFilm){
+    public long reserveer(NieuweFilm nieuweFilm){
         /*var vrijePlaatsen = 0;
         var aankoopPrijs = BigDecimal.ZERO;*/
         var film = new Film(nieuweFilm.titel(), nieuweFilm.jaar(), 0, BigDecimal.ZERO);
@@ -45,6 +51,15 @@ public class FilmService {
 
     public void update(long id, String titel){
         filmRepository.update(id, titel);
+    }
+    @Transactional
+    public long reserveer(Reservatie reservatie){
+        var filmId = reservatie.getFilmId();
+        var film = filmRepository.findAndLockById(filmId)
+                .orElseThrow(() -> new FilmNietGevondenException(filmId));
+        film.reserveer(reservatie.getPlaatsen());
+        filmRepository.updateVrijePlaatsen(filmId, film.getVrijePlaatsen());
+        return reservatieRepository.create(reservatie);
     }
 
 

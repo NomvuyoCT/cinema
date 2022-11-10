@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assertions.*;
 @AutoConfigureMockMvc
 class FilmControllerTest extends AbstractTransactionalJUnit4SpringContextTests {
     private final String FILMS = "films";
+    private final String RESERVATIES = "reservaties";
     private final MockMvc mockMvc;
 
     public FilmControllerTest(MockMvc mockMvc) {
@@ -130,5 +131,54 @@ class FilmControllerTest extends AbstractTransactionalJUnit4SpringContextTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonData))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void reserveer() throws Exception {
+        var id = idVanTestFilm1();
+        var jsonData = Files.readString(TEST_RESOURCES.resolve("correcteReservatie.json"));
+        var responseBody =
+                mockMvc.perform(post("/films/{id}/reservaties", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonData))
+                        .andExpect(status().isOk())
+                        .andReturn().getResponse().getContentAsString();
+        assertThat(countRowsInTableWhere(RESERVATIES,
+                "emailAdres = 'test.email@test.com' and id = " + responseBody)).isOne();
+        assertThat(countRowsInTableWhere(FILMS,
+                "vrijePlaatsen = 2 and id = " + id));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"reservatieMetNegatievePlaatsen.json", "reservatieZonderPlaatsen.json",
+    "reservatieZonderEmailAdres.json", "reservatieMetVerkeerdeEmailAdres.json"})
+    void reservatieMetVerkeerdeDataMislukt(String bestandsNaam) throws Exception {
+        var id = idVanTestFilm1();
+        var jsonData = Files.readString(TEST_RESOURCES.resolve(bestandsNaam));
+        mockMvc.perform(post("/films/{id}/reservaties", id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonData))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void reservatieMetOnbestaandeIdMislukt() throws Exception {
+        var jsonData =
+                Files.readString(TEST_RESOURCES.resolve("correcteReservatie.json"));
+        mockMvc.perform(post("/films/{id}/reservaties", Long.MAX_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonData))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void reservatieMetTeVeelPlaatsenMislukt() throws Exception {
+        var id = idVanTestFilm1();
+        var jsonData =
+                Files.readString(TEST_RESOURCES.resolve("reservatieMetTeVeelPlaatsen.json"));
+        mockMvc.perform(post("/films/{id}/reservaties", id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonData))
+                .andExpect(status().isConflict());
     }
 }

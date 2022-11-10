@@ -25,8 +25,23 @@
             <dd id="vrijePlaatsen"></dd>
         </dl>
         <button id="verwijder">Verwijder</button>
+        <label>Nieuwe Titel:
+            <span id="nieuweTitelFout" class="fout" hidden>Verplicht</span>
+            <input id="nieuweTitel" required>
+        </label>
+        <button id="bewaar">Bewaar</button>
+        <label>E-mail adres:
+            <span id="emailAdresFout" class="fout" hidden>Verplicht juiste e-mail adres</span>
+            <input id="emailAdres" required type="email">
+        </label>
+        <label>Aantal Plaatsen:
+            <span id="plaatsenFout" class="fout" hidden>Verplicht positief getal</span>
+            <input id="plaatsen" required type="number" min="0" step="1">
+        </label>
+        <button id="reserveer">Reserveer</button>
     </div>
     <div id="nietGevonden" class="fout" hidden>Film niet gevonden</div>
     <div id="storing" class="fout" hidden>Storing, contacteer helpdesk</div>
+    <div id="conflict" class="fout" hidden></div>
 </body>
 </html>

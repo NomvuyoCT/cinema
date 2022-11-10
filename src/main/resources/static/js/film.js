@@ -33,12 +33,36 @@ byId("bewaar").onclick = async function () {
     }
 
 };
+byId("reserveer").onclick = async function () {
+    verberg("emailAdresFout");
+    verberg("plaatsenFout");
+    const emailInput = byId("emailAdres");
+    if (! emailInput.checkValidity()){
+        toon("emailAdresFout");
+        emailInput.focus();
+        return;
+    }
+    const plaatsenInput = byId("plaatsen");
+    if (! plaatsenInput.checkValidity()){
+        toon("plaatsenFout");
+        plaatsenInput.focus();
+        return;
+    }
+    const toevoegReservatie = {
+        emailAdres : emailInput.value,
+        plaatsen: plaatsenInput.value
+    };
+    reserveerFilm(toevoegReservatie)
+}
 function verbergFilmEnFouten(){
     verberg("film");
     verberg("zoekIdFout");
     verberg("nietGevonden");
     verberg("nieuweTitelFout")
+    verberg("emailAdresFout");
+    verberg("plaatsenFout");
     verberg("storing");
+    verberg("conflict");
 }
 async function findById(id){
     const response = await fetch(`films/${id}`)
@@ -67,5 +91,31 @@ async function updateFilm(titel){
         setText("titel", titel);
     } else {
         toon("storing")
+    }
+}
+async function reserveerFilm(toevoegReservatie){
+    verberg("nietGevonden");
+    verberg("storing");
+    verberg("conflict");
+    const response = await fetch(`films/${byId("zoekId").value}/reservaties`,
+    {
+        method: "POST",
+        headers: {'Content-Type': "application/json"},
+        body: JSON.stringify(toevoegReservatie)
+    });
+    if (response.ok){
+        window.location = "allefilms.html";
+    } else {
+        switch (response.status){
+            case 404:
+                toon("nietGevonden");
+                break;
+            case 409:
+                const responseBody = await response.json();
+                setText("conflict", responseBody.message);
+                toon("conflict");
+            default:
+                toon("storing");
+        }
     }
 }

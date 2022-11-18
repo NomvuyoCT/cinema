@@ -8,9 +8,9 @@ public class Reservatie {
     private final long filmId;
     private final String emailAdres;
     private final int plaatsen;
-    private final LocalDate besteld;
+    private final LocalDateTime besteld;
 
-    public Reservatie(long id, long filmId, String emailAdres, int plaatsen, LocalDate besteld) {
+    public Reservatie(long id, long filmId, String emailAdres, int plaatsen, LocalDateTime besteld) {
         this.id = id;
         this.filmId = filmId;
         this.emailAdres = emailAdres;
@@ -18,7 +18,7 @@ public class Reservatie {
         this.besteld = besteld;
     }
     public Reservatie(long filmId, String emailAdres, int plaatsen){
-        this(0, filmId, emailAdres, plaatsen, LocalDate.now());
+        this(0, filmId, emailAdres, plaatsen, LocalDateTime.now());
     }
 
     public long getId() {
@@ -37,7 +37,7 @@ public class Reservatie {
         return plaatsen;
     }
 
-    public LocalDate getBesteld() {
+    public LocalDateTime getBesteld() {
         return besteld;
     }
 }

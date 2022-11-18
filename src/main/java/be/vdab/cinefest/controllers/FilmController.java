@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 
 @RestController
 @Validated
+@RequestMapping("films")
 public class FilmController {
     private final FilmService filmService;
 
@@ -34,44 +35,44 @@ public class FilmController {
             @NotNull @Email String emailAdres,
             @JsonProperty(required = true) @Positive int plaatsen
     ){}
-    @GetMapping("films/totaalVrijePlaatsen")
+    @GetMapping("totaalVrijePlaatsen")
     int  findTotaalVrijePlaatsen(){
         return filmService.findTotaalVrijePlaatsen();
     }
-    @GetMapping("films/{id}")
+    @GetMapping("{id}")
     ZonderAankoopprijs findById(@PathVariable long id){
         return filmService.findById(id)
                 .map(film -> new ZonderAankoopprijs(film))
                 .orElseThrow(() -> new FilmNietGevondenException(id));
     }
-    @GetMapping("films")
+    @GetMapping
     Stream<ZonderAankoopprijs> findAll(){
         return filmService.findAll()
                 .stream()
                 .map(film -> new ZonderAankoopprijs(film));
     }
-    @GetMapping(value = "films", params = "jaar")
+    @GetMapping(params = "jaar")
     Stream<ZonderAankoopprijs> findByJaar(int jaar){
         return filmService.findByJaar(jaar)
                 .stream()
                 .map(film -> new ZonderAankoopprijs(film));
     }
-    @DeleteMapping("films/{id}")
+    @DeleteMapping("{id}")
     void delete(@PathVariable long id){
         filmService.delete(id);
     }
 
-    @PostMapping("films")
+    @PostMapping
     long reserveer(@RequestBody @Valid NieuweFilm nieuweFilm){
         var id = filmService.reserveer(nieuweFilm);
         return id;
     }
-    @PatchMapping("films/{id}/titel")
+    @PatchMapping("{id}/titel")
     void update(@PathVariable long id,
                 @RequestBody @NotBlank String titel){
         filmService.update(id, titel);
     }
-    @PostMapping("films/{id}/reservaties")
+    @PostMapping("{id}/reservaties")
     long reserveer(@PathVariable long id,
                    @RequestBody @Valid ToevoegReservatie toevoegReservatie){
         var reservatie = new Reservatie(id,

@@ -3,6 +3,7 @@ package be.vdab.cinefest.services;
 import be.vdab.cinefest.domain.Film;
 import be.vdab.cinefest.domain.Reservatie;
 import be.vdab.cinefest.dto.NieuweFilm;
+import be.vdab.cinefest.dto.ReservatieMetFilmTitel;
 import be.vdab.cinefest.exceptions.FilmNietGevondenException;
 import be.vdab.cinefest.repositories.FilmRepository;
 import be.vdab.cinefest.repositories.ReservatieRepository;
@@ -61,6 +62,7 @@ public class FilmService {
         filmRepository.updateVrijePlaatsen(filmId, film.getVrijePlaatsen());
         return reservatieRepository.create(reservatie);
     }
+
 
 
 }
